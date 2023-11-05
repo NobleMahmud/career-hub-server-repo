@@ -11,6 +11,7 @@ app.get('/', (req, res)=>{
     res.send('career-hub server is running')
 })
 
+
 app.listen(port, ()=>{
     console.log(`career-hub server is running on port: ${port}`);
 })
