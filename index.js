@@ -48,6 +48,34 @@ async function run() {
     res.send(result);
     })
 
+    app.post('/jobs', async(req, res)=>{
+      const newJob = req.body;
+      const result = await jobsCollection.insertOne(newJob);
+      res.send(result);
+    })
+
+        // applied
+        const userCollection = client.db('career-hub').collection('users');
+
+        app.get('/applied', async(req, res)=>{
+          console.log(req.query);
+      
+          let query = {};
+          if(req.query?.email){
+            query={email: req.query.email}
+          }
+          const result = await userCollection.find(query).toArray();
+          res.send(result);
+        })
+
+        app.post('/applied', async(req, res)=>{
+          const apply = req.body;
+          console.log(apply);
+          const result = await userCollection.insertOne(apply);
+          res.send(result);
+    
+        })
+
 
     
 
