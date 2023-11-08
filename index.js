@@ -79,6 +79,14 @@ async function run() {
           res.send(result);
         })
 
+
+        app.get('/jobs/:id', async (req, res) => {
+          const id = req.params.id;
+          const result = await jobsCollection.findOne({ _id: new ObjectId(id) })
+          res.send(result);
+        })
+
+
         app.post('/applied', async(req, res)=>{
           const apply = req.body;
           console.log(apply);
@@ -94,22 +102,59 @@ async function run() {
           res.send(result);
         })
 
-        app.patch('/jobs/:id', async(req, res)=>{
-          const update = req.body;
-          console.log(update);
+        app.put('/jobs/:id', async (req, res) => {
+          const job = req.body;
+          console.log(job);
           const id = req.params.id;
-          const filter = { _id: new ObjectId(id)};
-    
-          const updateDoc = {
+          const filter = { _id: new ObjectId(id) };
+          const options = { upsert: true };
+          const updateJob = {
             $set: {
-              status: update.status
+              jobTitle: job.jobTitle, jobDescription: job.jobDescription, jobCategory: job.jobCategory, 
+              img: job.img, logo: job.logo, postingDate: job.postingDate, applicationDeadline: job.applicationDeadline, salaryRange: job.salaryRange, applicants:job.applicants
             },
           };
-    
-          const result = await bookingCollection.updateOne(filter, updateDoc);
+          const result = await jobsCollection.updateOne(filter, updateJob, options);
           res.send(result);
-    
         })
+
+        app.patch('/jobs/:id', async (req, res) => {
+          const job = req.body;
+          console.log(job);
+          const id = req.params.id;
+          const filter = { _id: new ObjectId(id) };
+          // const options = { upsert: true };
+          const updateJob = {
+            $inc: { applicants: 1 } 
+          };
+          const result = await jobsCollection.updateOne(filter, updateJob);
+          res.send(result);
+        })
+
+      //   db.products.updateOne(
+      //     { _id: "abc123" },
+      //     { $inc: { applicants: 1 } }
+      //  )
+        // app.patch('/jobs/:id', async(req, res)=>{
+        //   const update = req.body;
+        //   console.log(update);
+        //   const id = req.params.id;
+        //   const filter = { _id: new ObjectId(id)};
+    
+        //   const updateDoc = {
+        //     $set: {
+        //       status: update.status
+        //     },
+        //   };
+    
+        //   const result = await jobsCollection.updateOne(filter, updateDoc);
+        //   res.send(result);
+    
+        // })
+
+
+
+
 
         // 
         // const userPostCollection = client.db('career-hub').collection('usersPosts');
