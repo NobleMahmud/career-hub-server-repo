@@ -29,11 +29,11 @@ async function run() {
     // jobs
     const jobsCollection = client.db('career-hub').collection('jobs');
 
-    app.get('/jobs', async(req, res)=>{
-      const cursor = jobsCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    })
+    // app.get('/jobs', async(req, res)=>{
+    //   const cursor = jobsCollection.find();
+    //   const result = await cursor.toArray();
+    //   res.send(result);
+    // })
 
     app.get('/jobs/:id', async(req, res)=>{
       const id = req.params.id;
@@ -51,6 +51,17 @@ async function run() {
     app.post('/jobs', async(req, res)=>{
       const newJob = req.body;
       const result = await jobsCollection.insertOne(newJob);
+      res.send(result);
+    })
+
+    app.get('/jobs', async(req, res)=>{
+      console.log(req.query);
+  
+      let query = {};
+      if(req.query?.email){
+        query={email: req.query.email}
+      }
+      const result = await jobsCollection.find(query).toArray();
       res.send(result);
     })
 
@@ -75,6 +86,53 @@ async function run() {
           res.send(result);
     
         })
+
+        app.delete('/jobs/:id', async(req, res)=>{
+          const id = req.params.id;
+          const query = {_id: new ObjectId (id)}
+          const result = await jobsCollection.deleteOne(query);
+          res.send(result);
+        })
+
+        app.patch('/jobs/:id', async(req, res)=>{
+          const update = req.body;
+          console.log(update);
+          const id = req.params.id;
+          const filter = { _id: new ObjectId(id)};
+    
+          const updateDoc = {
+            $set: {
+              status: update.status
+            },
+          };
+    
+          const result = await bookingCollection.updateOne(filter, updateDoc);
+          res.send(result);
+    
+        })
+
+        // 
+        // const userPostCollection = client.db('career-hub').collection('usersPosts');
+        // // posted
+        // app.post('/posted', async(req, res)=>{
+        //   const posted = req.body;
+        //   console.log(posted);
+        //   const result = await userPostCollection.insertOne(posted);
+        //   res.send(result);
+    
+        // })
+       
+        // app.get('/posted', async(req, res)=>{
+        //   console.log(req.query);
+      
+        //   let query = {};
+        //   if(req.query?.email){
+        //     query={email: req.query.email}
+        //   }
+        //   const result = await userPostCollection.find(query).toArray();
+        //   res.send(result);
+        // })
+
 
 
     
